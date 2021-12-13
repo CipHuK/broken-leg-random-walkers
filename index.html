@@ -37,6 +37,10 @@
 
                 return chooses[Math.floor(Math.random() * chooses.length)]
             }
+
+            display() {
+
+            }
         }
 
         class Grid {
@@ -78,6 +82,9 @@
         let w = new Walker(1, 1)
         let next = w.next(g.grid)
 
+        g.grid[1][1] = 0
+        g.grid[next.x][next.y] = 0
+
         ctx.beginPath();
         ctx.lineWidth = "4";
         ctx.strokeStyle = "green";
@@ -85,9 +92,10 @@
         ctx.lineTo(next.x * spacing + offset, next.y * spacing + offset)
         ctx.stroke();
 
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 2000; i++) {
             w = next
             next = w.next(g.grid)
+            g.grid[next.x][next.y] = 0
 
             ctx.beginPath();
             ctx.lineWidth = "4";
