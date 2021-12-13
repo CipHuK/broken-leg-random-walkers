@@ -20,31 +20,46 @@
         }
 
         class Walker {
-            constructor(x, y) {
+            constructor(x, y, path) {
                 this.x = x
                 this.y = y
+
+                if (path) {
+                    this.path = path.slice()
+                    this.path.push(this)
+                } else {
+                    this.path = [this]
+                }
             }
 
             next(grid) {
                 const chooses = [];
 
                 if (this.x > 0 && grid[this.x - 1][this.y]) {
-                    chooses.push(new Walker(this.x - 1, this.y));
+                    chooses.push(new Walker(this.x - 1, this.y, this.path));
                 }
 
                 if (this.x < grid.length - 1 && grid[this.x + 1][this.y]) {
-                    chooses.push(new Walker(this.x + 1, this.y));
+                    chooses.push(new Walker(this.x + 1, this.y, this.path));
                 }
 
                 if (this.y > 0 && grid[this.x][this.y - 1]) {
-                    chooses.push(new Walker(this.x, this.y - 1));
+                    chooses.push(new Walker(this.x, this.y - 1, this.path));
                 }
 
                 if (grid[0].length - 1 > 0 && grid[this.x][this.y + 1]) {
-                    chooses.push(new Walker(this.x, this.y + 1));
+                    chooses.push(new Walker(this.x, this.y + 1, this.path));
                 }
 
                 return chooses[Math.floor(Math.random() * chooses.length)]
+            }
+
+            prev() {
+                this.path.pop()
+
+                if (this.path.length !== 0) {
+                    return this.path.pop()
+                }
             }
 
             display() {
@@ -74,9 +89,11 @@
             display() {
                 for (let i = 0; i < this.grid.length; i++) {
                     for (let j = 0; j < this.grid[0].length; j++) {
+                        //ctx.fillStyle = "green";
                         point(i * this.spacing + this.offset, j * this.spacing + this.offset)
                     }
                 }
+                ctx.fillStyle = "green";
             }
         }
 
@@ -96,15 +113,14 @@
                     const next = w.next(g.grid)
 
                     if (!next) {
-                        // TODO pop from the walker path
-                        // TODO tracking of the walker path
-                        // Track back until valid path will not be found
-                        walkerList[i] = next
+                        walkerList[i] = w.prev()
                     } else {
                         line(
                             w.x * spacing + offset, w.y * spacing + offset,
                             next.x * spacing + offset, next.y * spacing + offset
                         )
+
+                        point(next.x * spacing + offset, next.y * spacing + offset, 2)
 
                         walkerList[i] = next
                     }
@@ -114,10 +130,13 @@
 
         const g = new Grid(1000, 500, spacing, offset)
         g.initGrid()
-        g.display()
 
-
-        let ws = [new Walker(0, 0), new Walker(47, 22), new Walker(47, 0), new Walker(0, 22)]
+        /*
+        *   *   *
+        *       *
+        *   *   *
+        */
+        let ws = [new Walker(0, 0), new Walker(47, 22), new Walker(47, 0), new Walker(0, 22), new Walker(23, 11)]
 
         display(g, ws, ctx)
     }
