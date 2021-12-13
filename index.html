@@ -3,6 +3,9 @@
         const c = document.getElementById("myCanvas");
         const ctx = c.getContext("2d");
 
+        ctx.fillStyle = "#900";
+        ctx.fillRect(0, 0, c.width, c.height);
+
         const point = (x, y, weight = 3) => {
             const weightHalf = weight / 2
             ctx.beginPath();
@@ -13,10 +16,23 @@
         const line = (x, y, dx, dy, weight = 4) => {
             ctx.beginPath();
             ctx.lineWidth = weight;
-            ctx.strokeStyle = "green";
+            ctx.strokeStyle = "yellow";
             ctx.moveTo(x, y)
             ctx.lineTo(dx, dy)
             ctx.stroke();
+
+            ctx.fillStyle = "yellow";
+            point(x, y, 2)
+
+            ctx.beginPath();
+            ctx.lineWidth = weight;
+            ctx.strokeStyle = "orange";
+            ctx.moveTo(x + 5, y + 5)
+            ctx.lineTo(dx + 5 , dy + 5)
+            ctx.stroke();
+
+            ctx.fillStyle = "orange";
+            point(dx + 5, dy + 5, 2)
         }
 
         class Walker {
@@ -47,7 +63,7 @@
                     chooses.push(new Walker(this.x, this.y - 1, this.path));
                 }
 
-                if (grid[0].length - 1 > 0 && grid[this.x][this.y + 1]) {
+                if (this.y < grid[0].length && grid[this.x][this.y + 1]) {
                     chooses.push(new Walker(this.x, this.y + 1, this.path));
                 }
 
@@ -93,17 +109,17 @@
                         point(i * this.spacing + this.offset, j * this.spacing + this.offset)
                     }
                 }
-                ctx.fillStyle = "green";
+                ctx.fillStyle = "yellow";
             }
         }
 
         const spacing = 20
-        const offset = spacing
+        const offset = 25
 
         const display = (grid, walkerList, ctx) => {
             grid.display()
 
-            for (let j = 0; j < 200; j++) {
+            for (let j = 0; j < 2000; j++) {
                 for (let i = 0; i < walkerList.length; i++) {
                     if (!walkerList[i]) continue;
 
@@ -128,7 +144,7 @@
             }
         }
 
-        const g = new Grid(1000, 500, spacing, offset)
+        const g = new Grid(1200, 800, spacing, offset)
         g.initGrid()
 
         /*
@@ -136,12 +152,24 @@
         *       *
         *   *   *
         */
-        let ws = [new Walker(0, 0), new Walker(47, 22), new Walker(47, 0), new Walker(0, 22), new Walker(23, 11)]
+        let ws = [
+            // new Walker(0, 0),
+            // new Walker(47, 22),
+            // new Walker(47, 0),
+            // new Walker(0, 22),
+            // new Walker(23, 11)
+            new Walker(0, 0),
+            new Walker(57, 33),
+            new Walker(47, 0),
+            new Walker(0, 33),
+            new Walker(28, 0),
+            new Walker(28, 33)
+        ]
 
         display(g, ws, ctx)
     }
 
 </script>
-<canvas id="myCanvas" width="1000" height="500" style="border:1px solid #000000;">
+<canvas id="myCanvas" width="1200" height="800">
 
 </canvas>
