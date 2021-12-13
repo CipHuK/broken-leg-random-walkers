@@ -10,6 +10,15 @@
             ctx.fill();
         }
 
+        const line = (x, y, dx, dy, weight = 4) => {
+            ctx.beginPath();
+            ctx.lineWidth = weight;
+            ctx.strokeStyle = "green";
+            ctx.moveTo(x, y)
+            ctx.lineTo(dx, dy)
+            ctx.stroke();
+        }
+
         class Walker {
             constructor(x, y) {
                 this.x = x
@@ -79,19 +88,26 @@
 
             for (let j = 0; j < 200; j++) {
                 for (let i = 0; i < walkerList.length; i++) {
+                    if (!walkerList[i]) continue;
+
                     w = walkerList[i]
                     g.grid[w.x][w.y] = 0
 
                     const next = w.next(g.grid)
 
-                    ctx.beginPath();
-                    ctx.lineWidth = "4";
-                    ctx.strokeStyle = "green";
-                    ctx.moveTo(w.x * spacing + offset, w.y * spacing + offset)
-                    ctx.lineTo(next.x * spacing + offset, next.y * spacing + offset)
-                    ctx.stroke();
+                    if (!next) {
+                        // TODO pop from the walker path
+                        // TODO tracking of the walker path
+                        // Track back until valid path will not be found
+                        walkerList[i] = next
+                    } else {
+                        line(
+                            w.x * spacing + offset, w.y * spacing + offset,
+                            next.x * spacing + offset, next.y * spacing + offset
+                        )
 
-                    walkerList[i] = next
+                        walkerList[i] = next
+                    }
                 }
             }
         }
@@ -101,7 +117,7 @@
         g.display()
 
 
-        let ws = [new Walker(1, 1), new Walker(40, 20)]
+        let ws = [new Walker(0, 0), new Walker(47, 22), new Walker(47, 0), new Walker(0, 22)]
 
         display(g, ws, ctx)
     }
