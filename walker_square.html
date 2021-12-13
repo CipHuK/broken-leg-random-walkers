@@ -124,8 +124,8 @@
             }
         }
 
-        const spacing = 20
-        const offset = 25
+        const spacing = 15
+        const offset = 20
 
         const display = (grid, walkerList, ctx) => {
             grid.display()
@@ -134,7 +134,7 @@
                 for (let i = 0; i < walkerList.length; i++) {
                     if (!walkerList[i]) continue;
 
-                    w = walkerList[i]
+                    const w = walkerList[i]
                     g.grid[w.x][w.y] = 0
 
                     const next = w.next(g.grid)
