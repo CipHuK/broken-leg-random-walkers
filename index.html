@@ -6,39 +6,41 @@
         ctx.fillStyle = "#900";
         ctx.fillRect(0, 0, c.width, c.height);
 
-        const point = (x, y, weight = 3) => {
+        const point = (x, y, weight = 6) => {
             const weightHalf = weight / 2
             ctx.beginPath();
             ctx.arc(x, y, weight, 0, 2 * Math.PI);
             ctx.fill();
         }
 
-        const line = (x, y, dx, dy, weight = 4) => {
+        const line = (x, y, dx, dy, color, shadow, weight = 5) => {
             ctx.beginPath();
             ctx.lineWidth = weight;
-            ctx.strokeStyle = "yellow";
+            ctx.strokeStyle = color;
             ctx.moveTo(x, y)
             ctx.lineTo(dx, dy)
             ctx.stroke();
 
-            ctx.fillStyle = "yellow";
-            point(x, y, 2)
+            ctx.fillStyle = color;
+            point(x, y, Math.floor(weight / 2))
 
             ctx.beginPath();
             ctx.lineWidth = weight;
-            ctx.strokeStyle = "orange";
-            ctx.moveTo(x + 5, y + 5)
-            ctx.lineTo(dx + 5 , dy + 5)
+            ctx.strokeStyle = shadow;
+            ctx.moveTo(x + weight + 1, y + weight + 1)
+            ctx.lineTo(dx + weight + 1, dy + weight + 1)
             ctx.stroke();
 
-            ctx.fillStyle = "orange";
-            point(dx + 5, dy + 5, 2)
+            ctx.fillStyle = shadow;
+            point(dx + weight + 1, dy + weight + 1, Math.floor(weight / 2))
         }
 
         class Walker {
-            constructor(x, y, path) {
+            constructor(x, y, path, color, shadow) {
                 this.x = x
                 this.y = y
+                this.color = color
+                this.shadow = shadow
 
                 if (path) {
                     this.path = path.slice()
@@ -48,23 +50,27 @@
                 }
             }
 
+            copy(x, y) {
+                return new Walker(x, y, this.path, this.color, this.shadow)
+            }
+
             next(grid) {
                 const chooses = [];
 
                 if (this.x > 0 && grid[this.x - 1][this.y]) {
-                    chooses.push(new Walker(this.x - 1, this.y, this.path));
+                    chooses.push(this.copy(this.x - 1, this.y));
                 }
 
                 if (this.x < grid.length - 1 && grid[this.x + 1][this.y]) {
-                    chooses.push(new Walker(this.x + 1, this.y, this.path));
+                    chooses.push(this.copy(this.x + 1, this.y));
                 }
 
                 if (this.y > 0 && grid[this.x][this.y - 1]) {
-                    chooses.push(new Walker(this.x, this.y - 1, this.path));
+                    chooses.push(this.copy(this.x, this.y - 1));
                 }
 
                 if (this.y < grid[0].length && grid[this.x][this.y + 1]) {
-                    chooses.push(new Walker(this.x, this.y + 1, this.path));
+                    chooses.push(this.copy(this.x, this.y + 1));
                 }
 
                 return chooses[Math.floor(Math.random() * chooses.length)]
@@ -76,6 +82,15 @@
                 if (this.path.length !== 0) {
                     return this.path.pop()
                 }
+            }
+            
+            line(next) {
+                line(
+                    w.x * spacing + offset, w.y * spacing + offset,
+                    next.x * spacing + offset, next.y * spacing + offset,
+                    this.color,
+                    this.shadow
+                )
             }
 
             display() {
@@ -93,6 +108,10 @@
             }
 
             initGrid() {
+                let maxX = Math.floor((this.w - 2 * this.offset) / this.spacing); 
+                let maxY = Math.floor((this.h - 2 * this.offset) / this.spacing); 
+                console.log(maxX, maxY);
+
                 for (let x = this.offset; x < this.w - this.offset; x += this.spacing) {
                     const row = []
                     for (let y = this.offset; y < this.h - this.offset; y += this.spacing) {
@@ -106,7 +125,7 @@
                 for (let i = 0; i < this.grid.length; i++) {
                     for (let j = 0; j < this.grid[0].length; j++) {
                         //ctx.fillStyle = "green";
-                        point(i * this.spacing + this.offset, j * this.spacing + this.offset)
+                        //point(i * this.spacing + this.offset, j * this.spacing + this.offset)
                     }
                 }
                 ctx.fillStyle = "yellow";
@@ -131,12 +150,12 @@
                     if (!next) {
                         walkerList[i] = w.prev()
                     } else {
-                        line(
-                            w.x * spacing + offset, w.y * spacing + offset,
-                            next.x * spacing + offset, next.y * spacing + offset
-                        )
+                        // ?? remove collision
+                        g.grid[next.x][next.y] = 0
 
-                        point(next.x * spacing + offset, next.y * spacing + offset, 2)
+                        w.line(next, spacing, offset)
+                        
+                        //point(next.x * spacing + offset, next.y * spacing + offset, 2)
 
                         walkerList[i] = next
                     }
@@ -153,17 +172,13 @@
         *   *   *
         */
         let ws = [
-            // new Walker(0, 0),
-            // new Walker(47, 22),
-            // new Walker(47, 0),
-            // new Walker(0, 22),
-            // new Walker(23, 11)
-            new Walker(0, 0),
-            new Walker(57, 33),
-            new Walker(47, 0),
-            new Walker(0, 33),
-            new Walker(28, 0),
-            new Walker(28, 33)
+            new Walker(0, 0, null, "yellow", "orange"),
+            new Walker(28, 0, null, "#8CC", "#599"),
+            new Walker(56, 0, null, "#A7F", "#539"),
+
+            new Walker(56, 36, null, "#9F0", "#590"),
+            new Walker(28, 36, null, "#C88", "#955"),
+            new Walker(0, 36, null, "#AAA", "#666"),
         ]
 
         display(g, ws, ctx)
