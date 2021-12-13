@@ -3,7 +3,7 @@
         const c = document.getElementById("myCanvas");
         const ctx = c.getContext("2d");
 
-        const point = (x, y, weight = 4) => {
+        const point = (x, y, weight = 3) => {
             const weightHalf = weight / 2
             ctx.beginPath();
             ctx.arc(x, y, weight, 0, 2 * Math.PI);
@@ -11,7 +11,32 @@
         }
 
         class Walker {
+            constructor(x, y) {
+                this.x = x
+                this.y = y
+            }
 
+            next(grid) {
+                const chooses = [];
+
+                if (this.x > 0 && grid[this.x - 1][this.y]) {
+                    chooses.push(new Walker(this.x - 1, this.y));
+                }
+
+                if (this.x < grid.length - 1 && grid[this.x + 1][this.y]) {
+                    chooses.push(new Walker(this.x + 1, this.y));
+                }
+
+                if (this.y > 0 && grid[this.x][this.y - 1]) {
+                    chooses.push(new Walker(this.x, this.y - 1));
+                }
+
+                if (grid[0].length - 1 > 0 && grid[this.x][this.y + 1]) {
+                    chooses.push(new Walker(this.x, this.y + 1));
+                }
+
+                return chooses[Math.floor(Math.random() * chooses.length)]
+            }
         }
 
         class Grid {
@@ -42,18 +67,41 @@
             }
         }
 
-        const g = new Grid(500, 500, 15, 15)
+        const spacing = 20
+        const offset = spacing
+
+        const g = new Grid(1000, 500, spacing, offset)
         g.initGrid()
         g.display()
 
+        // -------
+        let w = new Walker(1, 1)
+        let next = w.next(g.grid)
 
-        ctx.fillStyle = "#FF0000";
-        // point(10, 10, 2)
-        // point(20, 20, 2)
+        ctx.beginPath();
+        ctx.lineWidth = "4";
+        ctx.strokeStyle = "green";
+        ctx.moveTo(w.x * spacing + offset, w.y * spacing + offset)
+        ctx.lineTo(next.x * spacing + offset, next.y * spacing + offset)
         ctx.stroke();
+
+        for (let i = 0; i < 20; i++) {
+            w = next
+            next = w.next(g.grid)
+
+            ctx.beginPath();
+            ctx.lineWidth = "4";
+            ctx.strokeStyle = "green";
+            ctx.moveTo(w.x * spacing + offset, w.y * spacing + offset)
+            ctx.lineTo(next.x * spacing + offset, next.y * spacing + offset)
+            ctx.stroke();
+        }
+
+
+//        ctx.stroke();
     }
 
 </script>
-<canvas id="myCanvas" width="500" height="500" style="border:1px solid #000000;">
+<canvas id="myCanvas" width="1000" height="500" style="border:1px solid #000000;">
 
 </canvas>
