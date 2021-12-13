@@ -13,26 +13,18 @@
             ctx.fill();
         }
 
-        const line = (x, y, dx, dy, color, shadow, weight = 5) => {
+        const line = (x, y, dx, dy, color, shadow, weight = 14) => {
             ctx.beginPath();
             ctx.lineWidth = weight;
             ctx.strokeStyle = color;
             ctx.moveTo(x, y)
             ctx.lineTo(dx, dy)
             ctx.stroke();
-
+            
             ctx.fillStyle = color;
-            point(x, y, Math.floor(weight / 2))
-
-            ctx.beginPath();
-            ctx.lineWidth = weight;
-            ctx.strokeStyle = shadow;
-            ctx.moveTo(x + weight + 1, y + weight + 1)
-            ctx.lineTo(dx + weight + 1, dy + weight + 1)
-            ctx.stroke();
-
-            ctx.fillStyle = shadow;
-            point(dx + weight + 1, dy + weight + 1, Math.floor(weight / 2))
+            ctx.rect(x - weight/2, y - weight/2, weight, weight)
+            ctx.rect(dx - weight/2, dy - weight/2, weight, weight)
+            ctx.fill();
         }
 
         class Walker {
