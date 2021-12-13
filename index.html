@@ -1,0 +1,59 @@
+<script>
+    window.onload = () => {
+        const c = document.getElementById("myCanvas");
+        const ctx = c.getContext("2d");
+
+        const point = (x, y, weight = 4) => {
+            const weightHalf = weight / 2
+            ctx.beginPath();
+            ctx.arc(x, y, weight, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        class Walker {
+
+        }
+
+        class Grid {
+            constructor(w, h, spacing, offset) {
+                this.w = w
+                this.h = h
+                this.spacing = spacing
+                this.offset = offset
+                this.grid = []
+            }
+
+            initGrid() {
+                for (let x = this.offset; x < this.w - this.offset; x += this.spacing) {
+                    const row = []
+                    for (let y = this.offset; y < this.h - this.offset; y += this.spacing) {
+                        row.push(1)
+                    }
+                    this.grid.push(row)
+                }
+            }
+
+            display() {
+                for (let i = 0; i < this.grid.length; i++) {
+                    for (let j = 0; j < this.grid[0].length; j++) {
+                        point(i * this.spacing + this.offset, j * this.spacing + this.offset)
+                    }
+                }
+            }
+        }
+
+        const g = new Grid(500, 500, 15, 15)
+        g.initGrid()
+        g.display()
+
+
+        ctx.fillStyle = "#FF0000";
+        // point(10, 10, 2)
+        // point(20, 20, 2)
+        ctx.stroke();
+    }
+
+</script>
+<canvas id="myCanvas" width="500" height="500" style="border:1px solid #000000;">
+
+</canvas>
