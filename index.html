@@ -74,39 +74,36 @@
         const spacing = 20
         const offset = spacing
 
+        const display = (grid, walkerList, ctx) => {
+            grid.display()
+
+            for (let j = 0; j < 200; j++) {
+                for (let i = 0; i < walkerList.length; i++) {
+                    w = walkerList[i]
+                    g.grid[w.x][w.y] = 0
+
+                    const next = w.next(g.grid)
+
+                    ctx.beginPath();
+                    ctx.lineWidth = "4";
+                    ctx.strokeStyle = "green";
+                    ctx.moveTo(w.x * spacing + offset, w.y * spacing + offset)
+                    ctx.lineTo(next.x * spacing + offset, next.y * spacing + offset)
+                    ctx.stroke();
+
+                    walkerList[i] = next
+                }
+            }
+        }
+
         const g = new Grid(1000, 500, spacing, offset)
         g.initGrid()
         g.display()
 
-        // -------
-        let w = new Walker(1, 1)
-        let next = w.next(g.grid)
 
-        g.grid[1][1] = 0
-        g.grid[next.x][next.y] = 0
+        let ws = [new Walker(1, 1), new Walker(40, 20)]
 
-        ctx.beginPath();
-        ctx.lineWidth = "4";
-        ctx.strokeStyle = "green";
-        ctx.moveTo(w.x * spacing + offset, w.y * spacing + offset)
-        ctx.lineTo(next.x * spacing + offset, next.y * spacing + offset)
-        ctx.stroke();
-
-        for (let i = 0; i < 2000; i++) {
-            w = next
-            next = w.next(g.grid)
-            g.grid[next.x][next.y] = 0
-
-            ctx.beginPath();
-            ctx.lineWidth = "4";
-            ctx.strokeStyle = "green";
-            ctx.moveTo(w.x * spacing + offset, w.y * spacing + offset)
-            ctx.lineTo(next.x * spacing + offset, next.y * spacing + offset)
-            ctx.stroke();
-        }
-
-
-//        ctx.stroke();
+        display(g, ws, ctx)
     }
 
 </script>
