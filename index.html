@@ -3,7 +3,7 @@
         const c = document.getElementById("myCanvas");
         const ctx = c.getContext("2d");
 
-        ctx.fillStyle = "#900";
+        ctx.fillStyle = "#000";
         ctx.fillRect(0, 0, c.width, c.height);
 
         const point = (x, y, weight = 6) => {
@@ -150,7 +150,6 @@
                     if (!next) {
                         walkerList[i] = w.prev()
                     } else {
-                        // ?? remove collision
                         g.grid[next.x][next.y] = 0
 
                         w.line(next, spacing, offset)
@@ -177,7 +176,7 @@
             new Walker(56, 0, null, "#A7F", "#539"),
 
             new Walker(56, 36, null, "#9F0", "#590"),
-            new Walker(28, 36, null, "#C88", "#955"),
+            new Walker(28, 36, null, "#F88", "#D33"),
             new Walker(0, 36, null, "#AAA", "#666"),
         ]
 
