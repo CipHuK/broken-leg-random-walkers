@@ -115,10 +115,16 @@
                 for (let x = this.offset; x < this.w - this.offset; x += this.spacing) {
                     const row = []
                     for (let y = this.offset; y < this.h - this.offset; y += this.spacing) {
-                        row.push(1)
+                        if ((x < this.w / 4) || (x > (this.w / 4) * 3) || (y < this.h / 4) || (y > (this.h / 4) * 3)) { 
+                            row.push(1)
+                            continue;
+                        }
+                        row.push(0)
                     }
                     this.grid.push(row)
                 }
+
+                console.table(this.grid)
             }
 
             display() {
@@ -171,7 +177,7 @@
         *   *   *
         */
         let ws = [
-        new Walker(0, 0, null, "yellow", "orange"),
+            new Walker(0, 0, null, "yellow", "orange"),
             new Walker(28, 0, null, "#8CC", "#599"),
             new Walker(56, 0, null, "#A7F", "#539"),
 
