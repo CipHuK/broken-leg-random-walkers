@@ -1,0 +1,117 @@
+<script>
+  window.onload = () => {
+    const c = document.getElementById("myCanvas");
+    const ctx = c.getContext("2d");
+
+    const margin = 2;
+    const size = 9;
+
+    const rand = (a) => (b) => Math.floor(Math.random() * (b - a) + a);
+    const randItem = (items) => items[Math.floor(Math.random() * items.length)];
+
+    const n = 27;
+    const u = c.width / n;
+    const gap = u / 4;
+
+    const square = (x, y, w, h) => {
+      ctx.beginPath();
+      ctx.rect(x, y, w, h)
+
+      const arr = [
+        "#fafa6e",
+        "#c4ec74",
+        "#92dc7e",
+        "#64c987",
+        "#39b48e",
+        "#089f8f",
+        "#00898a",
+        "#08737f",
+        "#215d6e",
+        "#2a4858",
+      ]
+
+      ctx.fillStyle = randItem(arr);
+      ctx.fill();
+    }
+
+    const compose = () => {
+      let itemVec = [];
+      for (let i = 0; i < 500; i++) {
+        let item = generate();
+        let overlap = itemVec.find(el => intersect(item, el));
+
+        if (!overlap) {
+          itemVec.push(item);
+        }
+      }
+
+      // fill gaps
+      for (let k = 3; k > 0; k--) {
+        //const k = 1;
+        for (let i = margin; i < n - margin - k + 1; i++) {
+          for (let j = margin; j < n - margin - k + 1; j++) {
+
+            let item = { i: i, j: j, s: k };
+            let overlap = !itemVec.find(el => intersect(item, el));
+
+            if (overlap) {
+              itemVec.push(item);
+            }
+          }
+        }
+      }
+
+      return itemVec;
+    }
+
+    const intersect = (s1, s2) => {
+      const q1 =
+        (s1.i <= s2.i && s1.i + s1.s > s2.i) ||
+        (s2.i <= s1.i && s2.i + s2.s > s1.i);
+
+      const q2 =
+        (s1.j <= s2.j && s1.j + s1.s > s2.j) ||
+        (s2.j <= s1.j && s2.j + s2.s > s1.j);
+
+      return q1 && q2;
+    }
+
+    const generate = () => {
+      const s = rand(2)(size)
+      const i = rand(margin)(n - margin - s + 1)
+      const j = rand(margin)(n - margin - s + 1)
+      const item = { i: i, j: j, s: s }
+
+      return item
+    }
+
+    // HERE
+    // ctx.fillStyle = "#efef90";
+    ctx.fillStyle = "#222";
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    const realElements = compose()
+    for (let item of realElements) {
+      console.log(item)
+      square(
+        Math.floor(item.i * u + gap / 2),
+        Math.floor(item.j * u + gap / 2),
+        Math.floor(item.s * u - gap),
+        Math.floor(item.s * u - gap)
+      )
+    }
+  }
+
+</script>
+<style>
+  #myCanvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 900px;
+  }
+</style>
+<canvas id="myCanvas" width="900" height="900">
+</canvas>
