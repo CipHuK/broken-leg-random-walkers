@@ -83,7 +83,7 @@
                     return this.path.pop()
                 }
             }
-            
+
             line(next) {
                 line(
                     w.x * spacing + offset, w.y * spacing + offset,
@@ -108,14 +108,14 @@
             }
 
             initGrid() {
-                let maxX = Math.floor((this.w - 2 * this.offset) / this.spacing); 
-                let maxY = Math.floor((this.h - 2 * this.offset) / this.spacing); 
+                let maxX = Math.floor((this.w - 2 * this.offset) / this.spacing);
+                let maxY = Math.floor((this.h - 2 * this.offset) / this.spacing);
                 console.log(maxX, maxY);
 
                 for (let x = this.offset; x < this.w - this.offset; x += this.spacing) {
                     const row = []
                     for (let y = this.offset; y < this.h - this.offset; y += this.spacing) {
-                        if ((x < this.w / 4) || (x > (this.w / 4) * 3) || (y < this.h / 4) || (y > (this.h / 4) * 3)) { 
+                        if ((x < this.w / 4) || (x > (this.w / 4) * 3) || (y < this.h / 4) || (y > (this.h / 4) * 3)) {
                             row.push(1)
                             continue;
                         }
@@ -159,7 +159,7 @@
                         g.grid[next.x][next.y] = 0
 
                         w.line(next, spacing, offset)
-                        
+
                         //point(next.x * spacing + offset, next.y * spacing + offset, 2)
 
                         walkerList[i] = next
