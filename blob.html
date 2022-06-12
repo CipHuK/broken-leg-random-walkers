@@ -1,0 +1,142 @@
+<script>
+  window.onload = () => {
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = "#222";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const offset = 2
+
+    const c = 30
+    const n = canvas.width / c
+    const nHalf = n / 2
+
+    const rand = (a) => (b) => Math.floor(Math.random() * (b - a) + a);
+    const rand0 = rand(0);
+    const randItem = (items) => items[Math.floor(Math.random() * items.length)];
+
+    const line = (i1, j1, i2, j2) => {
+      ctx.beginPath();
+      ctx.moveTo(i1 * n, j1 * n)
+      ctx.lineTo(i2 * n, j2 * n)
+      ctx.closePath();
+      //ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
+      ctx.stroke();
+    }
+
+    const combinationList = [
+      "#fafa6e",
+      //"#c4ec74",
+      //"#92dc7e",
+      //"#64c987",
+      "#39b48e",
+      //"#089f8f",
+      //"#00898a",
+      "#08737f",
+      //"#215d6e",
+      "#2a4858",
+    ]
+
+    let ii = 0;
+    const values = [];
+    for (let i = 0; i < c; i++) {
+      const row = []
+      for (let j = 0; j < c; j++) {
+        //ii++;
+        let regenerate = true;
+        let item;
+
+        while (regenerate) {
+          item = rand0(combinationList.length)
+
+          regenerate = false
+          if (j > 0 && i > 0) {
+            regenerate = (
+              item === values[i - 1][j] ||
+              item === row[j - 1]
+            )
+          }
+        }
+
+        row.push(item);
+      }
+      values.push(row)
+    }
+
+    for (let i = offset; i < c - offset; i++) {
+      for (let j = offset; j < c - offset; j++) {
+        ctx.fillStyle = combinationList[values[i][j]];
+
+        ctx.lineWidth = n;
+        ctx.strokeStyle = combinationList[values[i][j]];
+
+        // if (values[i + 1][j] === values[i][j]) {
+        //   line(i, j, i + 1, j)
+        // }
+
+        // if (values[i][j + 1] === values[i][j]) {
+        //   line(i, j, i, j + 1)
+        // }
+
+        if (values[i + 1][j + 1] === values[i][j]) {
+          ctx.lineWidth = 1;
+
+          const radius = n / 2
+          const tauT = radius * (Math.SQRT2 - 1) / 4
+
+          const iP = i + 1
+          const jP = j + 1
+
+          ctx.beginPath();
+          ctx.moveTo(i * n + radius, j * n)
+          ctx.quadraticCurveTo(i * n + radius + tauT, j * n + radius - tauT, iP * n, jP * n - radius)
+          ctx.lineTo(iP * n - radius, jP * n)
+          ctx.quadraticCurveTo(i * n + radius - tauT, j * n + radius + tauT, i * n, j * n + radius)
+          ctx.closePath();
+          ctx.stroke();
+          ctx.fill();
+        }
+
+        if (values[i - 1][j + 1] === values[i][j]) {
+          ctx.lineWidth = 1;
+
+          const radius = n / 2
+          //const tauT = radius * (Math.SQRT2 - 1) / Math.SQRT2 // jaime
+          const tauT = radius * (Math.SQRT2 - 1) / 4
+
+          const iP = i - 1
+          const jP = j + 1
+
+          ctx.beginPath();
+          ctx.moveTo(i * n - radius, j * n)
+          ctx.quadraticCurveTo(i * n - radius - tauT, j * n + radius - tauT, iP * n, jP * n - radius)
+          ctx.lineTo(iP * n + radius, jP * n)
+          ctx.quadraticCurveTo(i * n - radius + tauT, j * n + radius + tauT, i * n, j * n + radius)
+          ctx.closePath();
+          ctx.stroke();
+          ctx.fill();
+        }
+
+        ctx.beginPath()
+        ctx.arc(i * n, j * n, n / 2, 0, 2 * Math.PI)
+        //ctx.stroke()
+        ctx.fill();
+      }
+    }
+  }
+</script>
+
+<style>
+  #myCanvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 900px;
+  }
+</style>
+<!-- <canvas onload="draw();" id="myCanvas" width="900" height="900"> -->
+<canvas onload="draw();" id="myCanvas" width="900" height="900">
+</canvas>
