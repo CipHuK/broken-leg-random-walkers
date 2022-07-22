@@ -1,0 +1,88 @@
+<script>
+  window.onload = () => {
+    const c = document.getElementById("myCanvas");
+    const ctx = c.getContext("2d");
+
+    const margin = 2;
+    const size = 9;
+
+    const rand = (a) => (b) => Math.floor(Math.random() * (b - a) + a);
+    const randItem = (items) => items[Math.floor(Math.random() * items.length)];
+
+    const n = 27;
+    const uw = c.width / n;
+    const gap = uw / 4;
+
+    const rect = (x, y, w, h) => {
+      ctx.beginPath();
+      ctx.rect(x, y, w, h)
+
+      const arr = [
+        "#fafa6e",
+        "#c4ec74",
+        "#92dc7e",
+        "#64c987",
+        "#39b48e",
+        "#089f8f",
+        "#00898a",
+        "#08737f",
+        "#215d6e",
+        "#2a4858",
+      ]
+
+      const gradient = ctx.createLinearGradient(0, 0, w, h);
+      gradient.addColorStop(0, randItem(arr));
+      gradient.addColorStop(1, randItem(arr));
+      ctx.fillStyle = gradient;
+      ctx.fill();
+    }
+
+    const compose = () => {
+      let itemVec = [];
+
+      for (let i = margin + 1; i < n - margin - 1; i++) {
+          itemVec.push({ i: 1, j: i, s: 1 })
+      }
+
+      return itemVec;
+    }
+
+    // HERE
+    //ctx.fillStyle = "#efef90";
+    ctx.fillStyle = "#222";
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    const realElements = compose()
+
+      for (let item of realElements) {
+          rect(
+              Math.round(item.j * uw + gap / 2),
+              Math.round(margin * uw + gap / 2),
+              Math.round(1 * uw - gap),
+              Math.round((n - margin - margin) * uw - gap),
+          )
+      }
+
+      for (let item of realElements) {
+          rect(
+              Math.round(margin * uw + gap / 2),
+              Math.round(item.j * uw + gap / 2),
+              Math.round((n - margin - margin) * uw - gap),
+              Math.round(1 * uw - gap)
+          );
+      }
+  }
+
+</script>
+<style>
+  #myCanvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 900px;
+  }
+</style>
+<canvas id="myCanvas" width="900" height="900">
+</canvas>
