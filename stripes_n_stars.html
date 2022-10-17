@@ -31,8 +31,16 @@
       ]
 
       const gradient = ctx.createLinearGradient(0, 0, w, h);
-      gradient.addColorStop(0, randItem(arr));
-      gradient.addColorStop(1, randItem(arr));
+
+      let c1, c2;
+      do {
+          c1 = randItem(arr);
+          c2 = randItem(arr);
+      } while (c1 === c2)
+
+
+      gradient.addColorStop(0, c1);
+      gradient.addColorStop(1, c2);
       ctx.fillStyle = gradient;
       ctx.fill();
     }
