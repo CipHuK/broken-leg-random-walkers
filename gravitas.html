@@ -1,0 +1,101 @@
+<script>
+  window.onload = () => {
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let raf;
+    /*
+    G = N * s * s / m / m
+    m = 1 -> G = N * s * s
+          -> s = 10 (s ** 2 for correct form), N = 1 -> G = 100
+    m = radius; s = 1 -> G = N / radius ** 2
+     */
+    const G = 1; // depends on F(-orce) formula and expected speed
+
+    const balls = [];
+
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+          if (Math.random() > 0.6)
+          
+          balls.push({
+              x: i * 50 + 350,
+              y: j * 50 + 100,
+              f: 0,
+              a: 0,
+              radius: 5,
+              color: "rgb(" + (Math.random() * 255) + "," +  (Math.random() * 255) + "," + 0 + ")",
+              draw() {
+                  ctx.beginPath();
+                  ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
+                  ctx.closePath();
+                  ctx.fillStyle = this.color;
+                  ctx.fill();
+              },
+              recalc(fn, an) {
+                  const xn = this.f * Math.cos(this.a) + fn * Math.cos(an);
+                  const yn = this.f * Math.sin(this.a) + fn * Math.sin(an);
+
+                  this.f = Math.sqrt(xn * xn + yn * yn);
+                  this.a = Math.atan2(yn, xn);
+              },
+          });
+        }
+    }
+
+    const dist = (el1, el2) => {
+      const x = el1.x - el2.x;
+      const y = el1.y - el2.y;
+
+      return Math.sqrt(x * x + y * y);
+    }
+
+    const angle = (el1, el2) => {
+      const x = el1.x - el2.x;
+      const y = el1.y - el2.y;
+
+      return Math.PI + Math.atan2(y, x);
+    }
+
+
+    const draw = () => {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (const ball of balls) {
+        for (const ball2 of balls) {
+          // G * m1 * m2 / r / r
+          // G * 1 * 1 / (r ** 2)
+          // r = [1, 5] G * ~6 / r / r
+
+          if (ball !== ball2) {
+            const d = dist(ball, ball2);
+            const a = angle(ball, ball2);
+
+            if (d > 100) {
+                //const f = G / d / d; // <-- correct
+                const f = G / d
+                ball.recalc(f, a);
+            }
+          }
+        }
+      }
+
+      for (const ball of balls) {
+        ball.x += ball.f * Math.cos(ball.a);
+        ball.y += ball.f * Math.sin(ball.a);
+
+        ball.draw();
+      }
+
+      setTimeout(
+        () => raf = window.requestAnimationFrame(draw),
+        10
+      );
+    }
+
+    raf = window.requestAnimationFrame(draw);
+  }
+
+</script>
+<canvas id="myCanvas" width="900" height="900"></canvas>
